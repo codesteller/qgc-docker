@@ -116,6 +116,21 @@ add_custom_target(docker-logs
     VERBATIM
 )
 
+# Docker test run target (without hardware dependencies)
+add_custom_target(docker-test
+    COMMAND xhost +local:docker || true
+    COMMAND ${DOCKER_EXECUTABLE} run -it --rm 
+        --name ${DOCKER_CONTAINER_NAME}-test
+        --env="DISPLAY=$ENV{DISPLAY}"
+        --env="QT_X11_NO_MITSHM=1"
+        --net=host
+        -v /tmp/.X11-unix:/tmp/.X11-unix
+        ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
+    DEPENDS docker-build
+    COMMENT "Running QGroundControl for testing (no hardware dependencies)"
+    VERBATIM
+)
+
 # Docker shell target for debugging
 add_custom_target(docker-shell
     COMMAND ${DOCKER_EXECUTABLE} run -it --rm 

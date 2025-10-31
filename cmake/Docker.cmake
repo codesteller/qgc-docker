@@ -185,20 +185,24 @@ docker run -it --rm \\
     --env=\"DISPLAY=$DISPLAY\" \\
     --env=\"QT_X11_NO_MITSHM=1\" \\
     --net=host \\
-    -v /tmp/.X11-unix:/tmp/.X11-unix \\")
+    -v /tmp/.X11-unix:/tmp/.X11-unix")
     
     if(ENABLE_GPU)
-        string(APPEND GUI_SCRIPT_CONTENT "    --gpus all \\
-")
+        check_gpu_support()
+        if(HAS_NVIDIA_GPU)
+            string(APPEND GUI_SCRIPT_CONTENT " \\
+    --gpus all")
+        endif()
     endif()
     
-    if(ENABLE_SERIAL_DEVICES)
-        string(APPEND GUI_SCRIPT_CONTENT "    --device=${SERIAL_DEVICE}:${SERIAL_DEVICE} \\
-")
+    if(ENABLE_SERIAL_DEVICES AND EXISTS "${SERIAL_DEVICE}")
+        string(APPEND GUI_SCRIPT_CONTENT " \\
+    --device=${SERIAL_DEVICE}:${SERIAL_DEVICE}")
     endif()
     
-    string(APPEND GUI_SCRIPT_CONTENT "    -v \"${CMAKE_CURRENT_SOURCE_DIR}/data/QGCSettings:/root/.config/QGroundControl.org\" \\
-    -v \"${CMAKE_CURRENT_SOURCE_DIR}/data/QGCData:/root/Documents/QGroundControl\" \\
+    string(APPEND GUI_SCRIPT_CONTENT " \\
+    -v \"${CMAKE_CURRENT_SOURCE_DIR}/data/QGCSettings:/home/qgcuser/.config/QGroundControl.org\" \\
+    -v \"${CMAKE_CURRENT_SOURCE_DIR}/data/QGCData:/home/qgcuser/Documents/QGroundControl\" \\
     ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
 ")
     
