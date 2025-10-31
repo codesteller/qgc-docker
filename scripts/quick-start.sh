@@ -1,4 +1,12 @@
 #!/bin/bash
+#
+# * @ Copyright: @copyright (c) 2025 Gahan AI Private Limited
+# * @ Author: Pallab Maji
+# * @ Create Time: 2025-10-31 10:44:33
+# * @ Modified time: 2025-10-31 16:15:00
+# * @ Description: Quick start script for QGroundControl Docker
+# */
+
 # quick-start.sh - Quick start script for QGroundControl Docker
 
 set -e

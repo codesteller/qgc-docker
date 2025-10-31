@@ -1,3 +1,11 @@
+<!--
+* @ Copyright: @copyright (c) 2025 Gahan AI Private Limited
+* @ Author: Pallab Maji
+* @ Create Time: 2025-10-31 10:44:33
+* @ Modified time: 2025-10-31 16:15:00
+* @ Description: Comprehensive Docker guide for QGroundControl deployment
+-->
+
 # Running QGroundControl (QGC) Inside Docker
 
 QGroundControl (QGC) is a Qt-based Ground Station for MAVLink-based drones and vehicles.  

@@ -1,3 +1,12 @@
+#
+# * @ Copyright: @copyright (c) 2025 Gahan AI Private Limited
+# * @ Author: Pallab Maji
+# * @ Create Time: 2025-10-31 10:44:33
+# * @ Modified time: 2025-10-31 16:15:00
+# * @ Description: Docker image to run QGroundControl AppImage on Ubuntu 22.04
+# */
+
+
 # FROM ubuntu:22.04
 # FROM nvcr.io/nvidia/cuda:12.8.1-cudnn-devel-ubuntu22.04
 FROM ubuntu:22.04

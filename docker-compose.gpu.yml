@@ -1,0 +1,37 @@
+#
+# * @ Copyright: @copyright (c) 2025 Gahan AI Private Limited
+# * @ Author: Pallab Maji
+# * @ Create Time: 2025-10-31 10:44:33
+# * @ Modified time: 2025-10-31 16:15:00
+# * @ Description: Docker Compose GPU override file for NVIDIA GPU support
+# */
+
+# docker-compose.gpu.yml - Override file for GPU support
+# Use with: docker-compose -f docker-compose.yml -f docker-compose.gpu.yml up
+
+services:
+  qgc:
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  qgc-dev:
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

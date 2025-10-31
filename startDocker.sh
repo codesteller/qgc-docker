@@ -1,4 +1,11 @@
 #!/bin/bash
+#
+# * @ Copyright: @copyright (c) 2025 Gahan AI Private Limited
+# * @ Author: Pallab Maji
+# * @ Create Time: 2025-10-31 10:44:33
+# * @ Modified time: 2025-10-31 16:15:00
+# * @ Description: Docker startup script for QGroundControl with GPU support detection
+# */
 
 xhost +local:docker
 
