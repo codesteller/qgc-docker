@@ -63,6 +63,9 @@ docker-compose.*.yml
 doc/build/
 docs/build/
 
+# Large binary files (downloaded by Dockerfile)
+*.AppImage
+
 # Package manager files
 node_modules/
 npm-debug.log*
