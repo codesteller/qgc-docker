@@ -1,10 +1,13 @@
-version: '3.8'
-
 services:
   qgc:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - USER=qgcuser
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+        - QGC_DOWNLOAD_LINK=${QGC_DOWNLOAD_LINK:-https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl-x86_64.AppImage}
     image: qgc:latest
     container_name: qgc-container
     restart: unless-stopped
@@ -22,9 +25,9 @@ services:
     volumes:
       # X11 socket for GUI
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      # Persistent data
-      - ./data/QGCSettings:/root/.config/QGroundControl.org
-      - ./data/QGCData:/root/Documents/QGroundControl
+      # Persistent data (now uses non-root user path)
+      - ./data/QGCSettings:/home/qgcuser/.config/QGroundControl.org
+      - ./data/QGCData:/home/qgcuser/Documents/QGroundControl
       # X11 authentication (if available)
       - ${XAUTHORITY:-/dev/null}:${XAUTHORITY:-/dev/null}
     
@@ -60,7 +63,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: qgc:latest
+      args:
+        - USER=qgcuser
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    image: qgc:vnc
     container_name: qgc-vnc
     restart: unless-stopped
     
@@ -68,33 +75,32 @@ services:
     ports:
       - "5900:5900"
     
-    # Network configuration
-    network_mode: host
-    
     # Environment for headless operation
     environment:
       - DISPLAY=:99
+      - QT_X11_NO_MITSHM=1
     
     # Volume mounts
     volumes:
-      # Persistent data
-      - ./data/QGCSettings:/root/.config/QGroundControl.org
-      - ./data/QGCData:/root/Documents/QGroundControl
+      # Persistent data (updated for non-root user)
+      - ./data/QGCSettings:/home/qgcuser/.config/QGroundControl.org
+      - ./data/QGCData:/home/qgcuser/Documents/QGroundControl
     
     # Device access
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
     
-    # Custom command for VNC setup
+    # Custom command for VNC setup (run as root for package installation, then switch to qgcuser)
+    user: root
     command: >
       bash -c "
         apt-get update && 
-        apt-get install -y x11vnc xvfb fluxbox && 
+        apt-get install -y x11vnc xvfb fluxbox sudo && 
         export DISPLAY=:99 &&
         Xvfb :99 -screen 0 1280x720x24 &
         fluxbox &
         x11vnc -display :99 -forever -usepw -create &
-        /usr/local/bin/qgc
+        sudo -u qgcuser qgc
       "
     
     # This service is disabled by default
@@ -107,7 +113,9 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - INSTALL_DEV_TOOLS=true
+        - USER=qgcuser
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
     image: qgc:dev
     container_name: qgc-dev
     restart: "no"
@@ -119,16 +127,19 @@ services:
     environment:
       - DISPLAY=${DISPLAY:-:0}
       - QT_X11_NO_MITSHM=1
+      - XAUTHORITY=${XAUTHORITY}
     
     # Volume mounts
     volumes:
       # X11 socket for GUI
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      # Persistent data
-      - ./data/QGCSettings:/root/.config/QGroundControl.org
-      - ./data/QGCData:/root/Documents/QGroundControl
-      # Development logs
-      - ./logs:/var/log/qgc
+      # Persistent data (updated for non-root user)
+      - ./data/QGCSettings:/home/qgcuser/.config/QGroundControl.org
+      - ./data/QGCData:/home/qgcuser/Documents/QGroundControl
+      # Development logs (make sure qgcuser can write to it)
+      - ./logs:/home/qgcuser/logs
+      # X11 authentication
+      - ${XAUTHORITY:-/dev/null}:${XAUTHORITY:-/dev/null}
     
     # Device access
     devices:

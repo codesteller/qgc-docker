@@ -120,17 +120,36 @@ cmake .. \
 Alternative orchestration using Docker Compose:
 
 ```bash
-# Start default service
-docker-compose up
+# Copy environment configuration (optional)
+cp .env.example .env
 
-# Start with GPU support (edit docker-compose.yml first)
+# Start default service
 docker-compose up qgc
+
+# Start with GPU support
+docker-compose -f docker-compose.yml -f docker-compose.gpu.yml up qgc
 
 # Start VNC service for headless operation
 docker-compose --profile vnc up qgc-vnc
 
 # Start development service
 docker-compose --profile development up qgc-dev
+
+# Build and start all services
+docker-compose up --build
+```
+
+### Environment Configuration
+
+Copy `.env.example` to `.env` and customize:
+
+```bash
+# User configuration (matches host user to avoid permission issues)
+UID=1000
+GID=1000
+
+# QGroundControl version
+QGC_DOWNLOAD_LINK=https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl-x86_64.AppImage
 ```
 
 ## 📁 Project Structure
@@ -242,10 +261,26 @@ make docker-shell
 
 ## 🔒 Security Notes
 
-- The container runs with host networking for MAVLink UDP access
-- Serial devices are mounted directly into the container
-- X11 socket is shared for GUI access
-- Consider using `--user` flag for production deployments
+- **Non-root user**: Container runs as `qgcuser` (UID/GID 1000 by default) for better security
+- **Host networking**: Used for MAVLink UDP access - consider network isolation for production
+- **Device access**: Serial devices are mounted directly into the container
+- **X11 sharing**: X11 socket is shared for GUI access
+- **User mapping**: UID/GID can be customized to match host user and avoid permission issues
+
+### User ID Mapping
+
+To avoid permission issues with mounted volumes:
+
+```bash
+# Set your user ID in docker-compose
+export UID=$(id -u)
+export GID=$(id -g)
+docker-compose up qgc
+
+# Or set in .env file
+echo "UID=$(id -u)" >> .env
+echo "GID=$(id -g)" >> .env
+```
 
 ## 📖 Additional Documentation
 

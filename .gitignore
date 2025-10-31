@@ -53,6 +53,7 @@ data/QGCData/*
 .env
 .env.local
 .env.*.local
+!.env.example
 
 # Docker Compose override files
 docker-compose.override.yml
