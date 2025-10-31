@@ -1,0 +1,94 @@
+# CMake build directories
+build/
+Build/
+cmake-build-*/
+
+# CMake cache and generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+!cmake/
+!config/*.cmake
+
+# Docker generated scripts
+build/docker/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+*.out
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Docker volumes and data (keep structure but ignore contents)
+data/QGCSettings/*
+data/QGCData/*
+!data/QGCSettings/.gitkeep
+!data/QGCData/.gitkeep
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Docker Compose override files
+docker-compose.override.yml
+docker-compose.*.yml
+!docker-compose.yml
+
+# Generated documentation
+doc/build/
+docs/build/
+
+# Package manager files
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# Test results
+test-results/
+*.xml
+
+# Configuration overrides
+config/local.cmake
+config/*.local.cmake

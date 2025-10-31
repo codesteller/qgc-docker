@@ -1,0 +1,139 @@
+version: '3.8'
+
+services:
+  qgc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: qgc:latest
+    container_name: qgc-container
+    restart: unless-stopped
+    
+    # Network configuration
+    network_mode: host
+    
+    # Environment variables
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+      - XAUTHORITY=${XAUTHORITY}
+    
+    # Volume mounts
+    volumes:
+      # X11 socket for GUI
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # Persistent data
+      - ./data/QGCSettings:/root/.config/QGroundControl.org
+      - ./data/QGCData:/root/Documents/QGroundControl
+      # X11 authentication (if available)
+      - ${XAUTHORITY:-/dev/null}:${XAUTHORITY:-/dev/null}
+    
+    # Device access
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0  # Primary serial device
+      # Add more devices as needed:
+      # - /dev/ttyUSB1:/dev/ttyUSB1
+      # - /dev/ttyACM0:/dev/ttyACM0
+    
+    # GPU support (uncomment if NVIDIA GPU is available)
+    # runtime: nvidia
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    
+    # Security options
+    security_opt:
+      - seccomp:unconfined
+    
+    # Privileged mode (uncomment if needed for device access)
+    # privileged: true
+    
+    # Command override (uncomment to customize startup)
+    # command: ["/usr/local/bin/qgc"]
+
+  # VNC service for headless operation
+  qgc-vnc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: qgc:latest
+    container_name: qgc-vnc
+    restart: unless-stopped
+    
+    # Port mapping for VNC
+    ports:
+      - "5900:5900"
+    
+    # Network configuration
+    network_mode: host
+    
+    # Environment for headless operation
+    environment:
+      - DISPLAY=:99
+    
+    # Volume mounts
+    volumes:
+      # Persistent data
+      - ./data/QGCSettings:/root/.config/QGroundControl.org
+      - ./data/QGCData:/root/Documents/QGroundControl
+    
+    # Device access
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    
+    # Custom command for VNC setup
+    command: >
+      bash -c "
+        apt-get update && 
+        apt-get install -y x11vnc xvfb fluxbox && 
+        export DISPLAY=:99 &&
+        Xvfb :99 -screen 0 1280x720x24 &
+        fluxbox &
+        x11vnc -display :99 -forever -usepw -create &
+        /usr/local/bin/qgc
+      "
+    
+    # This service is disabled by default
+    profiles:
+      - vnc
+
+  # Development service with additional tools
+  qgc-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - INSTALL_DEV_TOOLS=true
+    image: qgc:dev
+    container_name: qgc-dev
+    restart: "no"
+    
+    # Network configuration
+    network_mode: host
+    
+    # Environment variables
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+    
+    # Volume mounts
+    volumes:
+      # X11 socket for GUI
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # Persistent data
+      - ./data/QGCSettings:/root/.config/QGroundControl.org
+      - ./data/QGCData:/root/Documents/QGroundControl
+      # Development logs
+      - ./logs:/var/log/qgc
+    
+    # Device access
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    
+    # This service is disabled by default
+    profiles:
+      - development
