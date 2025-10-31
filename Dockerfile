@@ -1,69 +1,37 @@
 # FROM ubuntu:22.04
 # FROM nvcr.io/nvidia/cuda:12.8.1-cudnn-devel-ubuntu22.04
-
-# # Dependencies for QGroundControl
-# RUN apt-get update && apt-get install -y \
-#     libgl1-mesa-glx \
-#     libglib2.0-0 \
-#     libpulse0 \
-#     libx11-xcb1 \
-#     libnss3 \
-#     libxcomposite1 \
-#     libxcursor1 \
-#     libxdamage1 \
-#     libxi6 \
-#     libxtst6 \
-#     libxrandr2 \
-#     libasound2 \
-#     libxkbcommon-x11-0 \
-#     x11-apps \
-#     wget \
-#     gstreamer1.0-plugins-bad \
-#     gstreamer1.0-libav \
-#     gstreamer1.0-gl \
-#     libfuse2 \
-#     libxcb-xinerama0 \
-#     libxkbcommon-x11-0 \
-#     libxcb-cursor-dev \
-#     && rm -rf /var/lib/apt/lists/*
-
-# EXPOSE 80
-
-# # Download prebuilt QGroundControl AppImage
-# RUN wget https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl-x86_64.AppImage -O /usr/local/bin/qgc \
-#     && chmod +x /usr/local/bin/qgc
-
-# CMD ["/usr/local/bin/qgc"]
-
 FROM ubuntu:22.04
 
-# Deps
+ARG QGC_DOWNLOAD_LINK=https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl-x86_64.AppImage
+
+# Base deps + GL/EGL runtime
 RUN apt-get update && apt-get install -y \
   ca-certificates wget x11-apps \
-  libopengl0 libglu1-mesa libgl1-mesa-dri mesa-vulkan-drivers \
-  libgl1-mesa-glx libglib2.0-0 libpulse0 libx11-xcb1 libnss3 \
-  libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libxrandr2 \
-  libasound2 libxkbcommon-x11-0 \
-  && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y \
   libegl1 libgles2 libglvnd0 libgl1-mesa-dri mesa-vulkan-drivers \
-  && ldconfig
+  libopengl0 libglu1-mesa libgl1-mesa-glx \
+  libglib2.0-0 libpulse0 libx11-xcb1 libnss3 \
+  libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libxrandr2 \
+  libasound2 libxkbcommon-x11-0 && rm -rf /var/lib/apt/lists/*
 
+# Create non-root user (matches default 1000:1000; override via build args if needed)
+ARG USER=qgcuser
+ARG UID=1000
+ARG GID=1000
+RUN groupadd -g ${GID} ${USER} && useradd -m -u ${UID} -g ${GID} -s /bin/bash ${USER}
 
-EXPOSE 80
-
-# Get AppImage and EXTRACT it (no FUSE needed at runtime)
+# Fetch AppImage and extract (avoid FUSE) + install launcher
 WORKDIR /opt/qgc
-RUN wget https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl-x86_64.AppImage -O QGC.AppImage && \
-    chmod +x QGC.AppImage && \
-    ./QGC.AppImage --appimage-extract && \
-    ln -s /opt/qgc/squashfs-root/AppRun /usr/local/bin/qgc
+RUN wget "${QGC_DOWNLOAD_LINK}" -O QGC.AppImage && \
+    chmod +x QGC.AppImage && ./QGC.AppImage --appimage-extract && \
+    ln -s /opt/qgc/squashfs-root/AppRun /usr/local/bin/qgc && \
+    chown -R ${USER}:${USER} /opt/qgc
 
-# Run
+# Persist settings location (owned by non-root)
+RUN mkdir -p /home/${USER}/.config/QGroundControl.org && chown -R ${USER}:${USER} /home/${USER}/.config
+ENV QT_X11_NO_MITSHM=1
+
+USER ${USER}
 CMD ["qgc"]
-
-
 
 
 
