@@ -10,21 +10,21 @@
 # This preset enables all features for development
 
 # Image settings
-DOCKER_IMAGE_NAME=qgc
-DOCKER_IMAGE_TAG=dev
+set(DOCKER_IMAGE_NAME "qgc" CACHE STRING "Docker image name" FORCE)
+set(DOCKER_IMAGE_TAG "dev" CACHE STRING "Docker image tag" FORCE)
 
 # Feature flags
-ENABLE_GPU=ON
-ENABLE_DISPLAY=ON
-ENABLE_NETWORK_HOST=ON
-ENABLE_SERIAL_DEVICES=ON
+set(ENABLE_GPU ON CACHE BOOL "Enable GPU support" FORCE)
+set(ENABLE_DISPLAY ON CACHE BOOL "Enable display forwarding" FORCE)
+set(ENABLE_NETWORK_HOST ON CACHE BOOL "Use host networking" FORCE)
+set(ENABLE_SERIAL_DEVICES ON CACHE BOOL "Enable serial devices" FORCE)
 
 # Device configuration
-SERIAL_DEVICE=/dev/ttyUSB0
+set(SERIAL_DEVICE "/dev/ttyUSB0" CACHE STRING "Serial device path" FORCE)
 
 # Development-specific settings
-CMAKE_BUILD_TYPE=Debug
-DOCKER_CONTAINER_NAME=qgc-dev
+set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+set(DOCKER_CONTAINER_NAME "qgc-dev" CACHE STRING "Container name" FORCE)
 
 # Display settings
-DISPLAY_RESOLUTION=1920x1080x24
+set(DISPLAY_RESOLUTION "1920x1080x24" CACHE STRING "Display resolution" FORCE)

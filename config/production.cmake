@@ -10,21 +10,21 @@
 # This preset is optimized for production deployment
 
 # Image settings
-DOCKER_IMAGE_NAME=qgc
-DOCKER_IMAGE_TAG=latest
+set(DOCKER_IMAGE_NAME "qgc" CACHE STRING "Docker image name" FORCE)
+set(DOCKER_IMAGE_TAG "latest" CACHE STRING "Docker image tag" FORCE)
 
 # Feature flags (conservative settings for production)
-ENABLE_GPU=OFF
-ENABLE_DISPLAY=ON
-ENABLE_NETWORK_HOST=ON
-ENABLE_SERIAL_DEVICES=ON
+set(ENABLE_GPU OFF CACHE BOOL "Enable GPU support" FORCE)
+set(ENABLE_DISPLAY ON CACHE BOOL "Enable display forwarding" FORCE)
+set(ENABLE_NETWORK_HOST ON CACHE BOOL "Use host networking" FORCE)
+set(ENABLE_SERIAL_DEVICES ON CACHE BOOL "Enable serial devices" FORCE)
 
 # Device configuration
-SERIAL_DEVICE=/dev/ttyUSB0
+set(SERIAL_DEVICE "/dev/ttyUSB0" CACHE STRING "Serial device path" FORCE)
 
 # Production-specific settings
-CMAKE_BUILD_TYPE=Release
-DOCKER_CONTAINER_NAME=qgc-production
+set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+set(DOCKER_CONTAINER_NAME "qgc-production" CACHE STRING "Container name" FORCE)
 
 # Display settings
-DISPLAY_RESOLUTION=1280x720x24
+set(DISPLAY_RESOLUTION "1280x720x24" CACHE STRING "Display resolution" FORCE)

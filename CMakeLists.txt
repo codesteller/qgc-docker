@@ -158,10 +158,10 @@ if(DOCKER_COMPOSE_EXECUTABLE)
 endif()
 
 # Help target to show available commands
-add_custom_target(help
+add_custom_target(show-help
     COMMAND ${CMAKE_COMMAND} -E echo "Available targets:"
     COMMAND ${CMAKE_COMMAND} -E echo "  docker-build      - Build the Docker image"
-    COMMAND ${CMAKE_COMMAND} -E echo "  docker-run        - Run QGroundControl (auto-detect display)"
+    COMMAND ${CMAKE_COMMAND} -E echo "  docker-run        - Run QGroundControl auto-detect display"
     COMMAND ${CMAKE_COMMAND} -E echo "  docker-run-gui    - Run QGroundControl with GUI forwarding"
     COMMAND ${CMAKE_COMMAND} -E echo "  docker-run-headless - Run QGroundControl in headless mode"
     COMMAND ${CMAKE_COMMAND} -E echo "  docker-stop       - Stop and remove container"
@@ -170,14 +170,14 @@ add_custom_target(help
     COMMAND ${CMAKE_COMMAND} -E echo "  docker-shell      - Open shell in container for debugging"
     COMMAND ${CMAKE_COMMAND} -E echo "  setup-x11         - Setup X11 permissions for Docker"
     COMMAND ${CMAKE_COMMAND} -E echo ""
-    COMMAND ${CMAKE_COMMAND} -E echo "Configuration options (use -D with cmake):"
-    COMMAND ${CMAKE_COMMAND} -E echo "  DOCKER_IMAGE_NAME     - Docker image name (default: qgc)"
-    COMMAND ${CMAKE_COMMAND} -E echo "  DOCKER_IMAGE_TAG      - Docker image tag (default: latest)"
-    COMMAND ${CMAKE_COMMAND} -E echo "  ENABLE_GPU            - Enable GPU support (default: ON)"
-    COMMAND ${CMAKE_COMMAND} -E echo "  ENABLE_DISPLAY        - Enable display forwarding (default: ON)"
-    COMMAND ${CMAKE_COMMAND} -E echo "  SERIAL_DEVICE         - Serial device path (default: /dev/ttyUSB0)"
+    COMMAND ${CMAKE_COMMAND} -E echo "Configuration options use -D with cmake:"
+    COMMAND ${CMAKE_COMMAND} -E echo "  DOCKER_IMAGE_NAME     - Docker image name default: qgc"
+    COMMAND ${CMAKE_COMMAND} -E echo "  DOCKER_IMAGE_TAG      - Docker image tag default: latest"
+    COMMAND ${CMAKE_COMMAND} -E echo "  ENABLE_GPU            - Enable GPU support default: ON"
+    COMMAND ${CMAKE_COMMAND} -E echo "  ENABLE_DISPLAY        - Enable display forwarding default: ON"
+    COMMAND ${CMAKE_COMMAND} -E echo "  SERIAL_DEVICE         - Serial device path default: /dev/ttyUSB0"
     COMMENT "Showing help information"
 )
 
 # Make help the default target
-add_custom_target(default_target ALL DEPENDS help)
+add_custom_target(default_target ALL DEPENDS show-help)
